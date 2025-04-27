@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   console.log('Elementos busqueda y resultados encontrados');
-  fetch('/data_muestra.json')
+  fetch('./data_muestra.json')
     .then(response => {
       console.log('Cargando data_muestra.json, status:', response.status, 'URL:', response.url);
       if (!response.ok) {
