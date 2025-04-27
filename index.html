@@ -1,0 +1,86 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diccionario de María Moliner</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+</head>
+<body class="bg-amber-50">
+  <header>
+    <h1>Diccionario de Uso del Español - María Moliner</h1>
+    <nav>
+      <ul>
+        <li><a href="#entradas">Entradas</a></li>
+        <li><a href="#prologo">Prólogo</a></li>
+        <li><a href="#presentacion">Presentación</a></li>
+        <li><a href="#uso">Uso</a></li>
+        <li><a href="#abreviaturas">Abreviaturas</a></li>
+        <li><a href="#apendice">Apéndice</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section id="entradas">
+      <input type="text" id="busqueda" placeholder="Buscar entrada (ej. abominación)..." aria-label="Buscar entrada">
+      <div id="resultados">
+        <p>Ingresa una palabra para buscar...</p>
+      </div>
+    </section>
+    <section id="prologo"><h2>Prólogo</h2><p>(Contenido del prólogo se añadirá)</p></section>
+    <section id="presentacion"><h2>Presentación</h2><p>(Contenido de la presentación se añadirá)</p></section>
+    <section id="uso"><h2>Uso del Diccionario</h2><p>(Instrucciones de uso se añadirán)</p></section>
+    <section id="abreviaturas"><h2>Abreviaturas</h2><p>(Lista de abreviaturas se añadirá)</p></section>
+    <section id="apendice"><h2>Apéndice Gramatical</h2><p>(Contenido del apéndice se añadirá)</p></section>
+  </main>
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(() => console.log('Service Worker registrado - mi-casita1'))
+        .catch(err => console.error('Error en Service Worker:', err));
+    }
+  </script>
+</body>
+</html>
