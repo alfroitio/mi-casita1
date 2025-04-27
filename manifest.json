@@ -1,0 +1,20 @@
+{
+  "name": "Diccionario de María Moliner",
+  "short_name": "Moliner",
+  "start_url": "/mi-casa/",
+  "display": "standalone",
+  "background_color": "#fef3c7",
+  "theme_color": "#b45309",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
